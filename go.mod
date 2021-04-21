@@ -1,4 +1,4 @@
-module main
+module github.com/minghsu0107/S3-Go
 
 go 1.15
 
