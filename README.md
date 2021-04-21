@@ -13,7 +13,7 @@ Below operations are performed in the following order:
 - List objects in a bucket with pagination
 - Create a bucket
   - s3 will return error if the bucket already exists
-- Upload an object to a bucket, intelligently buffering large files into smaller chunks and sending them in parallel across multiple goroutines
+- Upload an object to a bucket with 3 hour expiration, intelligently buffering large files into smaller chunks and sending them in parallel across multiple goroutines
   - s3 will overwrite the existing file when you upload the file with same name
 - Download an object in a bucket
 - Delete an object in a bucket
