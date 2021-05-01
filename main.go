@@ -29,8 +29,10 @@ var (
 )
 
 func main() {
+	creds := credentials.NewStaticCredentials(accessKey, secretKey, "")
+
 	config := &aws.Config{
-		Credentials:      credentials.NewStaticCredentials(accessKey, secretKey, ""),
+		Credentials:      creds,
 		Endpoint:         aws.String(s3Endpoint),
 		Region:           aws.String(s3Region),
 		DisableSSL:       aws.Bool(true),
@@ -139,6 +141,18 @@ func main() {
 
 	fmt.Println("Downloaded", toFile.Name(), numBytes, "bytes")
 
+	req, _ := client.GetObjectRequest(&s3.GetObjectInput{
+		Bucket: aws.String(newBucket),
+		Key:    aws.String(objKey),
+	})
+	urlStr, err := req.Presign(15 * time.Minute)
+
+	if err != nil {
+		fmt.Println("Failed to sign request", err)
+	}
+
+	fmt.Printf("Get presigned URL %q\n", urlStr)
+
 	resp, err := client.ListObjectsV2(&s3.ListObjectsV2Input{Bucket: aws.String(newBucket)})
 	if err != nil {
 		exitErrorf("Unable to list items in bucket %q, %v", newBucket, err)
@@ -148,7 +162,6 @@ func main() {
 		fmt.Println("Name:         ", *item.Key)
 		fmt.Println("Last modified:", *item.LastModified)
 		fmt.Println("Size (byte):         ", *item.Size)
-		fmt.Println("Storage class:", *item.StorageClass)
 		fmt.Println("")
 	}
 
