@@ -105,10 +105,12 @@ func main() {
 	uploader := s3manager.NewUploader(session)
 	// s3 will overwrite the existing file when you upload the file with same name
 	_, err = uploader.UploadWithContext(context.Background(), &s3manager.UploadInput{
-		Bucket:  aws.String(newBucket),
-		Key:     aws.String(objKey),
-		Body:    fromFile,
-		Expires: aws.Time(time.Now().Local().Add(3 * time.Hour)),
+		Bucket:      aws.String(newBucket),
+		Key:         aws.String(objKey),
+		ACL:         aws.String("public-read"),
+		ContentType: aws.String("text/plain"),
+		Body:        fromFile,
+		Expires:     aws.Time(time.Now().Local().Add(3 * time.Hour)),
 	})
 	if err != nil {
 		// Print the error and exit.
