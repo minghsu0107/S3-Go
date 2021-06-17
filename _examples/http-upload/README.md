@@ -7,7 +7,7 @@ S3_REGION=us-east-1               \
 S3_BUCKET=myfilebucket            \
 AWS_ACCESS_KEY_ID=access123       \
 AWS_SECRET_KEY=secret123          \
-go run maing.go
+go run main.go
 ```
 The server will listen on port 8088.
 
