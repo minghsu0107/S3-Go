@@ -133,9 +133,9 @@ func main() {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			case s3.ErrCodeNoSuchBucket:
-				exitErrorf("bucket %s does not exist", os.Args[1])
+				exitErrorf("bucket %s does not exist", newBucket)
 			case s3.ErrCodeNoSuchKey:
-				exitErrorf("object with key %s does not exist in bucket %s", os.Args[2], os.Args[1])
+				exitErrorf("object with key %s does not exist in bucket %s", objKey, newBucket)
 			}
 		}
 		exitErrorf("Unable to download item %q, %v", objKey, err)
