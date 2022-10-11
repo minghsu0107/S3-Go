@@ -15,6 +15,7 @@ Operations are performed in the following order:
   - Note that the expiration here determines how long the object is cacheable. If you want to delete / archive objects, you should configure the life cycle policy on the bucket level
 - Download an object in cocurrent chunks from a bucket
 - Create presigned url of an object with 15 minutes expiration
+  - Users can retrieve or upload new file directly from the browser using the presigned url
 - List objects in a bucket
 - Put an object to a bucket
 - Delete an object in a bucket
