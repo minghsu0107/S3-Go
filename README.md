@@ -16,6 +16,7 @@ Operations are performed in the following order:
 - Download an object in cocurrent chunks from a bucket
 - Create presigned url of an object with 15 minutes expiration
   - Users can retrieve or upload a file directly from the browser using the presigned url
-- List objects in a bucket
+- List objects with a given prefix
+- List objects with a given prefix and pagination
 - Put an object to a bucket
 - Delete an object in a bucket

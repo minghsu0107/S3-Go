@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	objKey     string = "myobjpath/hello.txt"
+	objKey     string = "myobjpath/v0/hello.txt"
 	uploadFrom string = "hello.txt"
 	downloadTo string = "hello-downloaded.txt"
 )
@@ -120,16 +120,48 @@ func main() {
 	}
 	fmt.Printf("Get presigned URL %q\n", resp.URL)
 
-	objs, err := client.ListObjectsV2(context.Background(), &s3.ListObjectsV2Input{Bucket: aws.String(s3Bucket)})
+	// step 1 - prefix: list all files with prefix "myobjpath/v0/"
+	// step 2 - delimiter: list only files that do not have "/" after the prefix
+	// this excludes all subfolders (eg. myobjpath/v0/subfolder/a.txt, myobjpath/v0/subfolder/b.txt)
+	listObjParams := &s3.ListObjectsV2Input{
+		Bucket:    aws.String(s3Bucket),
+		Prefix:    aws.String("myobjpath/v0/"),
+		Delimiter: aws.String("/"),
+		MaxKeys:   100, // default: 1000
+	}
+	objs, err := client.ListObjectsV2(context.Background(), listObjParams)
 	if err != nil {
 		exitErrorf("Unable to list items in bucket %q, %v", s3Bucket, err)
 	}
 
 	for _, item := range objs.Contents {
+		// will return full key name
 		fmt.Println("Name:         ", *item.Key)
 		fmt.Println("Last modified:", *item.LastModified)
 		fmt.Println("Size (byte):         ", item.Size)
 		fmt.Println("")
+	}
+
+	paginatorParams := &s3.ListObjectsV2Input{
+		Bucket:    aws.String(s3Bucket),
+		Prefix:    aws.String("myobjpath/v0/"),
+		Delimiter: aws.String("/"),
+	}
+	paginator := s3.NewListObjectsV2Paginator(client, paginatorParams, func(o *s3.ListObjectsV2PaginatorOptions) {
+		o.Limit = 25
+	})
+	// list up to 4 pages of object keys
+	// each page consists of up to 25 keys
+	pageNum := 0
+	for paginator.HasMorePages() && pageNum < 4 {
+		output, err := paginator.NextPage(context.Background())
+		if err != nil {
+			exitErrorf("list objects paginator error %v", err)
+		}
+		for _, item := range output.Contents {
+			fmt.Println("paginator: ", *item.Key)
+		}
+		pageNum++
 	}
 
 	_, err = client.PutObject(context.Background(), &s3.PutObjectInput{
