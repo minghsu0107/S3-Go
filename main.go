@@ -61,7 +61,9 @@ func main() {
 		Region:                      s3Region,
 		RetryMaxAttempts:            3,
 	}
-	client := s3.NewFromConfig(config)
+	client := s3.NewFromConfig(config, func(o *s3.Options) {
+	    o.UsePathStyle = true
+	})
 
 	fromFile, err := os.Open(uploadFrom)
 	if err != nil {
