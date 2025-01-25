@@ -62,7 +62,7 @@ func main() {
 		RetryMaxAttempts:            3,
 	}
 	client := s3.NewFromConfig(config, func(o *s3.Options) {
-	    o.UsePathStyle = true
+	    o.UsePathStyle = false
 	})
 
 	fromFile, err := os.Open(uploadFrom)
